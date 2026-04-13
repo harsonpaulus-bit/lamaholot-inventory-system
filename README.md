@@ -1,96 +1,129 @@
 <div align="center">
 
 # 🏫 Sistem Informasi Inventaris SD Lamaholot
-**Solusi Digital Manajemen Aset Sekolah yang Terintegrasi & Modern**
+**Solusi Digital Manajemen Aset Sekolah yang Terintegrasi, Modern, dan Accountable**
 
 [![Build Status](https://img.shields.io/badge/Status-Live-success.svg)](https://lamaholot-inventory.netlify.app)
 [![Tech Stack](https://img.shields.io/badge/Stack-Astro%20|%20Supabase%20|%20Tailwind-blue.svg)](https://astro.build)
 [![Deployment](https://img.shields.io/badge/Deploy-Netlify-00AD9F.svg?logo=netlify&logoColor=white)](https://netlify.com)
+[![Maintainer](https://img.shields.io/badge/Maintainer-Tim%20IT%20Lamaholot-orange.svg)](https://github.com/harsonpaulus-bit)
+
+---
+
+**Sistem Informasi Inventaris SD Lamaholot** adalah platform berbasis web yang dirancang khusus untuk mendigitalisasi seluruh pencatatan aset (barang) di lingkungan SD Lamaholot, Jakarta Barat. Sistem ini menggantikan proses manual yang lambat dengan database yang tersentralisasi untuk meningkatkan efisiensi operasional dan akuntabilitas pengelolaan aset sekolah.
+
+[🚀 Telusuri Aplikasi Live](https://lamaholot-inventory.netlify.app) • [📖 Dokumentasi Teknis](#-stack-teknologi) • [🏗️ Arsitektur](#-struktur-proyek)
 
 </div>
 
 ---
 
-## 📖 Ringkasan Proyek
+## ✨ Fitur Utama (Core Modules)
 
-**Sistem Informasi Inventaris SD Lamaholot** adalah aplikasi berbasis web yang dirancang khusus untuk mendigitalisasi pencatatan aset di lingkungan SD Lamaholot, Jakarta Barat. Aplikasi ini menggantikan proses manual yang lambat dengan sistem berbasis data yang cepat, aman, dan dapat dipertanggungjawabkan (accountable).
+Sistem ini dibangun dengan pendekatan **Premium ERP Style** untuk memberikan visibilitas maksimal bagi pengambil keputusan:
 
-Dibangun dengan estetika **Premium ERP Style**, sistem ini memberikan pengalaman pengguna yang bersih dan informatif bagi staf administrasi sekolah.
-
-## ✨ Fitur Utama
-
-- **📊 Dashboard Analitik**: Visualisasi real-time kondisi aset (Baik/Rusak), tren pertumbuhan inventaris, dan distribusi per kategori menggunakan *Chart.js*.
-- **📦 Manajemen Inventaris (CRUD)**: Kelola data barang secara lengkap mulai dari penambahan, pembaruan kondisi, hingga lokasi penyimpanan.
-- **📂 Klasifikasi Kategori**: Pengelompokan barang yang dinamis untuk memudahkan pencarian dan pelaporan.
-- **🔐 Autentikasi Keamanan**: Sistem login yang aman dengan pemisahan akses (Admin/Staff) terintegrasi dengan *Supabase Auth*.
-- **⚡ Quick Actions**: Tombol akses cepat dari dashboard untuk mempercepat alur kerja harian.
-- **📱 Responsive Design**: Optimal digunakan di desktop, tablet, maupun perangkat mobile.
+- **📊 Smart Dashboard Analitik**: 
+  - Visualisasi real-time kondisi aset (Baik/Rusak/Rusak Berat).
+  - Grafik tren pertumbuhan aset bulanan.
+  - Distribusi barang per kategori secara dinamis.
+  - Panel aktivitas terbaru dan aksi cepat (*Quick Actions*).
+- **📦 Manajemen Invenraris (Inventory CRUD)**: 
+  - Pencatatan barang lengkap dengan nama, jumlah, lokasi, dan deskripsi.
+  - Tracking kondisi fisik barang (Baik, Rusak Ringan, Rusak Berat).
+- **📂 Manajemen Kategori (Classification)**:
+  - Klasifikasi aset yang fleksibel untuk mempermudah pencarian dan audit.
+- **🔐 Keamanan & Akses Terpusat**:
+  - Autentikasi terintegrasi dengan **Supabase Auth**.
+  - Proteksi rute SSR melalui middleware.
+- **📄 Pelaporan Terstruktur**:
+  - Modul khusus untuk monitoring dan ekspor data aset.
 
 ## 🛠️ Stack Teknologi
 
-- **Framework**: [Astro 5](https://astro.build) (SSR Mode)
-- **Database & Auth**: [Supabase](https://supabase.com) (PostgreSQL & RLS)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com) (Custom UI System)
-- **Charts**: [Chart.js](https://www.chartjs.org/)
-- **Deployment**: [Netlify](https://www.netlify.com)
+Sistem dikembangkan menggunakan teknologi mutakhir untuk memastikan performa dan kemudahan pemeliharaan:
 
-## 🏗️ Struktur Proyek
+| Layer | Teknologi | Peran |
+| :--- | :--- | :--- |
+| **Frontend Framework** | [Astro 5.x](https://astro.build) | Server-Side Rendering (SSR) & Islands Architecture |
+| **Database** | [Supabase (PostgreSQL)](https://supabase.com) | Penyimpanan data relasional & Row Level Security (RLS) |
+| **Authentication** | [Supabase Auth](https://supabase.com/auth) | Manajemen sesi pengguna & proteksi rute |
+| **Styling** | [Tailwind CSS v3.4](https://tailwindcss.com) | Desain antarmuka responsif & premium |
+| **Visualizations** | [Chart.js 4.x](https://www.chartjs.org/) | Grafik analitik interaktif di dashboard |
+| **Hosting** | [Netlify](https://www.netlify.com) | Infrastruktur cloud dengan Edge Functions |
+
+## 🏗️ Struktur Proyek (Directory Mapping)
+
+Untuk developer yang akan melanjutkan pengembangan, berikut adalah peta direktori utama:
 
 ```text
 /
 ├── src/
-│   ├── components/       # Komponen UI Shared (Card, Badge, etc)
-│   ├── layouts/          # Template Layout Utama (Sidebar, Profile)
-│   ├── lib/              # Konfigurasi Supabase Client & Utils
-│   ├── middleware.ts     # Pengamanan Rute & Sesi Login
-│   └── pages/            # Rute Aplikasi (Dashboard, Barang, Kategori, Login)
-├── supabase/             # SQL Migrations & Database Schema
-├── public/               # Static Assets (Logos, Icons)
-├── astro.config.mjs      # Konfigurasi Astro & Adapter Netlify
-└── tailwind.config.mjs   # Konfigurasi Tema & Design System
+│   ├── components/       # Komponen UI Shared (Card, Badge, Button, etc)
+│   │   └── shared/       # Komponen atomic yang digunakan global
+│   ├── layouts/          # Template utama (Sidebar, Header, Profile)
+│   ├── lib/              # Konfigurasi Supabase (createSSRClient & utils)
+│   ├── middleware.ts     # Proteksi rute SSR & verifikasi cookie sesi
+│   ├── types/            # Definisi TypeScript untuk Barang & Kategori
+│   └── pages/            # View/Rute Utama Aplikasi
+│       ├── dashboard.astro # Halaman analitik utama
+│       ├── barang/         # Modul manajemen barang
+│       ├── kategori.astro  # Modul manajemen kategori
+│       ├── laporan.astro   # Modul pelaporan
+│       └── login.astro     # Gerbang masuk sistem (Auth)
+├── supabase/             
+│   └── migrations/       # Skema database & SQL Migration files
+├── astro.config.mjs      # Konfigurasi adapter Netlify (@astrojs/netlify)
+└── tailwind.config.mjs   # Desain system (Colors, Container, Mixins)
 ```
 
 ## 🚀 Memulai (Local Development)
 
-### 1. Prasyarat
-- Node.js v18.x atau lebih baru
-- Akun Supabase (untuk database)
+### 1. Prasyarat (Prerequisites)
+- **Node.js**: v18.x atau v20.x (direkomendasikan)
+- **npm**: v9.x+ atau yarn/pnpm
 
-### 2. Instalasi
+### 2. Instalasi & Setup
 ```bash
-# Clone repository
+# 1. Clone repository
 git clone https://github.com/harsonpaulus-bit/lamaholot-inventory-system.git
 
-# Masuk ke direktori
+# 2. Masuk ke direktori
 cd lamaholot-inventory-system
 
-# Instal dependensi
+# 3. Instal dependensi
 npm install
-```
 
-### 3. Konfigurasi Environment
-Salin file `.env.example` menjadi `.env` dan isi dengan kredensial Supabase Anda:
-```bash
+# 4. Inisialisasi Environment
 cp .env.example .env
 ```
 
-### 4. Jalankan Server Dev
+### 3. Konfigurasi Database
+1. Buat project baru di [Supabase Dashboard](https://supabase.com).
+2. Jalankan SQL migrations yang ada di folder `supabase/migrations/` di SQL Editor Supabase secara berurutan (001 -> 005).
+3. Masukkan `PUBLIC_SUPABASE_URL` dan `PUBLIC_SUPABASE_ANON_KEY` ke file `.env` lokal Anda.
+
+### 4. Menjalankan Server
 ```bash
 npm run dev
 ```
-Buka [http://localhost:4321](http://localhost:4321) di browser Anda.
 
-## ☁️ Deployment
+## ☁️ Deployment (CI/CD)
 
-Proyek ini terintegrasi dengan **Netlify**. Setiap push ke cabang `main` akan secara otomatis memicu build dan deploy ulang. Pastikan untuk menambahkan semua variabel dari `.env` ke dalam *Environment Variables* di dashboard Netlify.
+Proyek ini menggunakan **Netlify** dengan adapter SSR yang dioptimalkan:
+- **Build Command**: `npm run build`
+- **Publish Directory**: `dist`
+- **Adapter**: `@astrojs/netlify` (Otomatis mendeteksi Edge Functions)
+
+Pastikan variabel lingkungan (Environment Variables) sudah disetel di dashboard Netlify agar koneksi Supabase di sisi server berjalan lancar.
 
 ---
 
-## 👨‍💻 Catatan Developer (Delegasi)
+## 👨‍💻 Panduan Delegasi Developer (Best Practices)
 
-- **SSR Authentication**: Proyek ini menggunakan Astro middleware untuk menangani sesi autentikasi berbasis cookie.
-- **Supabase Client**: Gunakan `createSSRClient` saat bekerja di halaman server-side untuk memastikan sinkronisasi sesi.
-- **Layout Consistency**: Pastikan semua halaman baru dibungkus dengan `<MainLayout />`.
+1. **Authentication**: Gunakan `createSSRClient` dari `@/lib/supabase` untuk melakukan query di sisi server (Astro) agar sesi user tetap sinkron.
+2. **Database Schema**: Perhatikan integritas data. Hapus barang lewat cascade atau batasi penghapusan kategori jika masih memiliki barang aktif (`RESTRICT`).
+3. **Styling**: Gunakan variabel warna dari `Tailwind Config` (misal: `bg-primary-600`) untuk menjaga konsistensi visual ERP.
+4. **Middleware**: Semua halaman baru secara default terproteksi. Jika ingin rute publik, update logic di `src/middleware.ts`.
 
 ---
 
