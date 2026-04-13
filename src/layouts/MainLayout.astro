@@ -31,8 +31,12 @@ const { title } = Astro.props;
       <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-surface-200 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
         <div class="h-20 flex items-center px-8 border-b border-surface-100/60">
           <a href="/dashboard" class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-[#354ae6] flex items-center justify-center text-white shadow-lg shadow-primary-500/20">
-              <span class="font-bold text-lg leading-none">K</span>
+            <div class="w-10 h-10 rounded-xl bg-[#354ae6] p-2 flex items-center justify-center text-white shadow-lg shadow-primary-500/20">
+              <svg class="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+                <path d="m3.3 7 8.7 5 8.7-5" />
+                <path d="M12 22V12" />
+              </svg>
             </div>
             <span class="font-bold text-xl text-[#0f172a] tracking-tight">INVEN</span>
           </a>
@@ -61,13 +65,7 @@ const { title } = Astro.props;
             <span class="text-sm font-semibold tracking-wide">Reports</span>
           </a>
 
-          <div class="pt-4 pb-2 border-t border-surface-50 mt-4">
-             <p class="px-5 text-[10px] font-bold text-surface-400 uppercase tracking-widest mb-4 opacity-70">Support</p>
-             <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-xl text-surface-500 hover:text-primary-600 group transition-all duration-200">
-               <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-               <span class="text-sm font-semibold tracking-wide">Settings</span>
-             </a>
-          </div>
+
         </nav>
  
         <div class="px-4 py-8 border-t border-surface-50 mt-auto">

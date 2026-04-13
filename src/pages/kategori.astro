@@ -291,4 +291,12 @@ try {
       btn.textContent = 'Hapus';
     }
   });
+
+  // Check for auto-add param from dashboard
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('add') === 'true') {
+    openFormModal(false);
+    // Clean up URL without refreshing
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
 </script>
