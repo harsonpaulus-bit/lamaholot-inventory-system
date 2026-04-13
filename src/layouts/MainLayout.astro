@@ -1,0 +1,184 @@
+---
+import '../styles/global.css';
+import Toast from '../components/shared/Toast.astro';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Sistem Informasi Inventaris Berbasis Web SD Lamaholot" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>{title} | Inventaris SD Lamaholot</title>
+  </head>
+  <body class="bg-[#f3f4f6]" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">
+    <div class="flex h-screen overflow-hidden">
+      
+      <!-- Backdrop for mobile sidebar -->
+      <div id="sidebar-backdrop" class="fixed inset-0 bg-surface-900/50 z-20 hidden md:hidden transition-opacity opacity-0"></div>
+
+      <!-- Sidebar -->
+      <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-surface-200 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="h-20 flex items-center px-8 border-b border-surface-100/60">
+          <a href="/dashboard" class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-[#354ae6] flex items-center justify-center text-white shadow-lg shadow-primary-500/20">
+              <span class="font-bold text-lg leading-none">K</span>
+            </div>
+            <span class="font-bold text-xl text-[#0f172a] tracking-tight">INVEN</span>
+          </a>
+        </div>
+
+        <nav class="flex-1 px-4 py-8 space-y-1 overflow-y-auto">
+          <p class="px-5 text-[10px] font-bold text-surface-400 uppercase tracking-widest mb-4 opacity-70">Main Menu</p>
+          
+          <a href="/dashboard" class="flex items-center gap-3 px-5 py-3 rounded-xl text-surface-500 hover:text-primary-600 group transition-all duration-200">
+            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
+            <span class="text-sm font-semibold tracking-wide">Dashboard</span>
+          </a>
+          
+          <a href="/barang" class="flex items-center gap-3 px-5 py-3 rounded-xl text-surface-500 hover:text-primary-600 group transition-all duration-200">
+            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            <span class="text-sm font-semibold tracking-wide">Inventory</span>
+          </a>
+          
+          <a href="/kategori" class="flex items-center gap-3 px-5 py-3 rounded-xl text-surface-500 hover:text-primary-600 group transition-all duration-200">
+            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+            <span class="text-sm font-semibold tracking-wide">Kategori</span>
+          </a>
+ 
+          <a href="/laporan" class="flex items-center gap-3 px-5 py-3 rounded-xl text-surface-500 hover:text-primary-600 group transition-all duration-200">
+            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span class="text-sm font-semibold tracking-wide">Reports</span>
+          </a>
+
+          <div class="pt-4 pb-2 border-t border-surface-50 mt-4">
+             <p class="px-5 text-[10px] font-bold text-surface-400 uppercase tracking-widest mb-4 opacity-70">Support</p>
+             <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-xl text-surface-500 hover:text-primary-600 group transition-all duration-200">
+               <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+               <span class="text-sm font-semibold tracking-wide">Settings</span>
+             </a>
+          </div>
+        </nav>
+ 
+        <div class="px-4 py-8 border-t border-surface-50 mt-auto">
+          <button id="logout-btn" class="flex w-full items-center gap-3 px-5 py-3 text-surface-500 hover:text-red-600 group transition-all duration-200 font-semibold tracking-wide">
+            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            <span class="text-sm">Log Out</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Layout -->
+      <div class="flex-1 flex flex-col w-0 overflow-hidden">
+        <!-- Top Header -->
+        <header class="bg-white h-20 px-8 flex items-center justify-between z-10 shrink-0">
+          <div class="flex items-center flex-1 max-w-xl">
+            <button id="mobile-menu-btn" class="md:hidden p-2 -ml-2 text-surface-500 hover:bg-surface-50 rounded-xl mr-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            
+            <div class="relative w-full">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="h-4 w-4 text-surface-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </div>
+              <input type="text" class="block w-full pl-11 pr-3 py-3 border-0 rounded-xl text-surface-600 bg-surface-50/80 placeholder-surface-400 focus:ring-2 focus:ring-primary-500/10 sm:text-sm font-medium transition-all" placeholder="Search">
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-6 ml-4">
+            <button class="p-2 text-surface-400 hover:text-surface-600 hover:bg-surface-50 rounded-xl transition-all relative">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+              <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+            </button>
+            <div class="flex items-center gap-3 group cursor-pointer">
+              <div class="w-10 h-10 rounded-xl bg-surface-100 border border-surface-200 overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=4f46e5&color=fff" alt="Avatar" class="w-full h-full object-cover">
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto w-full">
+          <div class="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto min-h-full">
+            <slot />
+          </div>
+        </main>
+      </div>
+    </div>
+    
+    <Toast />
+
+    <script>
+      import { supabase } from '../lib/supabase';
+      
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          await supabase.auth.signOut();
+          document.cookie = 'sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          document.cookie = 'sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          window.location.href = '/login';
+        });
+      }
+
+      // Mobile Sidebar Logic
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+      
+      function toggleSidebar() {
+        if (!sidebar || !sidebarBackdrop) return;
+        
+        const isHidden = sidebar.classList.contains('-translate-x-full');
+        
+        if (isHidden) {
+          sidebar.classList.remove('-translate-x-full');
+          sidebarBackdrop.classList.remove('hidden');
+          setTimeout(() => {
+            sidebarBackdrop.classList.remove('opacity-0');
+            sidebarBackdrop.classList.add('opacity-100');
+          }, 10);
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          sidebarBackdrop.classList.remove('opacity-100');
+          sidebarBackdrop.classList.add('opacity-0');
+          setTimeout(() => {
+            sidebarBackdrop.classList.add('hidden');
+          }, 300); // Wait for transition
+        }
+      }
+
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+      }
+      
+      if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener('click', toggleSidebar);
+      }
+
+      // Active state highlight based on current path
+      const currentPath = window.location.pathname;
+      const navLinks = document.querySelectorAll('aside nav a');
+      
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath || (currentPath.startsWith(link.getAttribute('href')!) && link.getAttribute('href') !== '/')) {
+          link.classList.remove('text-surface-500');
+          link.classList.add('sidebar-active');
+          link.querySelector('svg')?.classList.remove('opacity-50');
+          link.querySelector('svg')?.classList.add('text-primary-600', 'opacity-100');
+        }
+      });
+    </script>
+  </body>
+</html>

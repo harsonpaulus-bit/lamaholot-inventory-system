@@ -1,0 +1,508 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import Badge from '../../components/shared/Badge.astro';
+import { createSSRClient } from '../../lib/supabase';
+
+const token = Astro.cookies.get('sb-access-token')?.value;
+const supabase = createSSRClient(token);
+
+
+// Fetch initial data via SSR Server
+let barangList: any[] = [];
+let kategoriList: any[] = [];
+let error = null;
+
+try {
+  const [
+    { data: barangData }, 
+    { data: kategoriData }
+  ] = await Promise.all([
+    supabase.from('barang').select('*, kategori(nama_kategori)').order('created_at', { ascending: false }).limit(10),
+    supabase.from('kategori').select('*').order('nama_kategori')
+  ]);
+  
+  barangList = barangData || [];
+  kategoriList = kategoriData || [];
+} catch (e: any) {
+  // Using dummy data if error
+  barangList = [
+    { id: '1', nama_barang: 'Meja Guru', jumlah: 10, lokasi: 'Ruang 1', kondisi: 'Baik', kategori_id: 'cat1', kategori: { nama_kategori: 'Mebeler' }, keterangan: '' },
+    { id: '2', nama_barang: 'Laptop ASUS', jumlah: 2, lokasi: 'TU', kondisi: 'Rusak Ringan', kategori_id: 'cat2', kategori: { nama_kategori: 'Elektronik' }, keterangan: '' }
+  ];
+  kategoriList = [
+    { id: 'cat1', nama_kategori: 'Mebeler' },
+    { id: 'cat2', nama_kategori: 'Elektronik' }
+  ];
+}
+---
+
+<MainLayout title="Daftar Barang">
+  <!-- Header & Actions -->
+  <!-- Header & Actions -->
+  <div class="mb-8 animate-fade-in flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-surface-900 tracking-tight">Daftar Barang</h1>
+      <p class="text-surface-500 mt-1">Kelola seluruh data inventaris sekolah</p>
+    </div>
+    
+    <button id="btn-add-barang" class="btn-primary !bg-[#354ae6] hover:!bg-[#283593] !shadow-sm focus:ring-4 focus:ring-primary-500/20">
+      <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+      <span>Tambah Barang</span>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <!-- Filters -->
+  <div class="glass-card p-4 mb-6 flex flex-col md:flex-row gap-4 relative z-20">
+    <div class="flex-1 relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-surface-400">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"></path></svg>
+      </div>
+      <input type="text" id="filter-search" class="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors text-sm font-medium placeholder-surface-400" placeholder="Cari nama barang...">
+    </div>
+    
+    <div class="flex-1 md:flex-none md:w-56 relative">
+      <select id="filter-kategori" class="w-full pl-4 pr-10 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors appearance-none text-sm font-medium text-surface-600 cursor-pointer">
+        <option value="">Semua Kategori</option>
+        {kategoriList.map(k => <option value={k.id}>{k.nama_kategori}</option>)}
+      </select>
+      <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-surface-400">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+      </div>
+    </div>
+
+    <div class="flex-1 md:flex-none md:w-56 relative">
+      <select id="filter-kondisi" class="w-full pl-4 pr-10 py-2.5 bg-surface-50 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors appearance-none text-sm font-medium text-surface-600 cursor-pointer">
+        <option value="">Semua Kondisi</option>
+        <option value="Baik">Baik</option>
+        <option value="Rusak Ringan">Rusak Ringan</option>
+        <option value="Rusak Berat">Rusak Berat</option>
+      </select>
+      <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-surface-400">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Container -->
+  <!-- Table Container -->
+  <div class="glass-card flex-1 flex flex-col overflow-hidden p-2">
+    <div class="flex-1 overflow-x-auto min-h-[400px] p-2">
+      <table class="w-full text-left border-separate border-spacing-y-2">
+        <thead class="bg-surface-50/50 relative z-10 sticky top-0">
+          <tr>
+            <th class="px-6 py-4 text-xs font-bold text-surface-500 uppercase tracking-wider rounded-l-xl w-12 border-b border-surface-200 backdrop-blur-md">No</th>
+            <th class="px-6 py-4 text-xs font-bold text-surface-500 uppercase tracking-wider border-b border-surface-200 backdrop-blur-md">Nama Barang</th>
+            <th class="px-6 py-4 text-xs font-bold text-surface-500 uppercase tracking-wider border-b border-surface-200 backdrop-blur-md">Kategori</th>
+            <th class="px-6 py-4 text-xs font-bold text-surface-500 uppercase tracking-wider text-center border-b border-surface-200 backdrop-blur-md">Jumlah</th>
+            <th class="px-6 py-4 text-xs font-bold text-surface-500 uppercase tracking-wider text-center border-b border-surface-200 backdrop-blur-md">Kondisi</th>
+            <th class="px-6 py-4 text-xs font-bold text-surface-500 uppercase tracking-wider border-b border-surface-200 backdrop-blur-md">Lokasi</th>
+            <th class="px-6 py-4 text-xs font-bold text-surface-500 uppercase tracking-wider text-center rounded-r-xl w-24 border-b border-surface-200 backdrop-blur-md">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Populated initially by SSR, then updated via JS -->
+          {barangList.map((item, index) => (
+            <tr class="bg-white hover:bg-surface-50 transition-colors shadow-sm ring-1 ring-surface-200/60 rounded-xl group" data-id={item.id}>
+              <td class="px-6 py-4 text-sm font-semibold text-surface-800 rounded-l-xl">{index + 1}</td>
+              <td class="px-6 py-4 text-sm font-bold text-surface-900 break-words max-w-[200px] group-hover:text-primary-700 transition-colors cursor-pointer">{item.nama_barang}</td>
+              <td class="px-6 py-4 text-sm font-medium text-surface-500">{item.kategori?.nama_kategori || '-'}</td>
+              <td class="px-6 py-4 text-center">
+                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-surface-100 text-surface-700 font-mono ring-1 ring-surface-200/50">
+                  {item.jumlah}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <Badge kondisi={item.kondisi} />
+              </td>
+              <td class="px-6 py-4 text-sm font-medium text-surface-500">
+                <div class="flex items-center gap-1.5 opacity-80">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                  {item.lokasi || '-'}
+                </div>
+              </td>
+              <td class="px-6 py-4 text-center rounded-r-xl">
+                <div class="flex justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button class="btn-edit text-surface-400 hover:text-primary-600 p-1.5 hover:bg-primary-50 rounded-lg transition-colors" aria-label="Edit" data-json={JSON.stringify(item)}>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                  </button>
+                  <button class="btn-delete text-surface-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-colors" aria-label="Hapus" data-id={item.id} data-nama={item.nama_barang}>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+          {barangList.length === 0 && (
+            <tr id="empty-state">
+              <td colspan="7" class="px-6 py-16 text-center">
+                <div class="flex flex-col items-center justify-center">
+                  <div class="w-20 h-20 bg-surface-50 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-10 h-10 text-surface-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                  </div>
+                  <p class="text-xl font-bold text-surface-900">Belum ada barang</p>
+                  <p class="text-surface-500 mt-2">Silakan tambahkan data inventaris sekolah Anda yang pertama.</p>
+                </div>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Table Footer / Pagination Info -->
+    <div class="bg-surface-50/50 px-6 py-4 rounded-b-xl border-t border-surface-200 flex items-center justify-between">
+      <div class="text-sm font-medium text-surface-500" id="table-summary">
+        Menampilkan <span class="font-bold text-surface-900 bg-white px-2 py-0.5 rounded border border-surface-200 mx-1">{barangList.length}</span> barang terbaru
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Modal (Add/Edit) -->
+  <div id="modal-form" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 transform translate-y-4 transition-transform duration-300" id="modal-form-content">
+      <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <h3 id="modal-title" class="text-lg font-semibold text-gray-900">Tambah Barang</h3>
+        <button id="btn-close-modal" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="p-6">
+        <form id="barang-form" class="space-y-4">
+          <input type="hidden" id="form-id" name="id" />
+          
+          <div>
+            <label for="nama_barang" class="block text-sm font-medium text-gray-700 mb-1">Nama Barang *</label>
+            <input type="text" id="nama_barang" name="nama_barang" required minlength="3" maxlength="255"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]">
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="kategori_id" class="block text-sm font-medium text-gray-700 mb-1">Kategori *</label>
+              <select id="kategori_id" name="kategori_id" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]">
+                <option value="">-- Pilih --</option>
+                {kategoriList.map(k => <option value={k.id}>{k.nama_kategori}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="jumlah" class="block text-sm font-medium text-gray-700 mb-1">Jumlah *</label>
+              <input type="number" id="jumlah" name="jumlah" required min="1"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]">
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="kondisi" class="block text-sm font-medium text-gray-700 mb-1">Kondisi *</label>
+              <select id="kondisi" name="kondisi" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]">
+                <option value="">-- Pilih --</option>
+                <option value="Baik">Baik</option>
+                <option value="Rusak Ringan">Rusak Ringan</option>
+                <option value="Rusak Berat">Rusak Berat</option>
+              </select>
+            </div>
+            <div>
+              <label for="lokasi" class="block text-sm font-medium text-gray-700 mb-1">Lokasi *</label>
+              <input type="text" id="lokasi" name="lokasi" required minlength="2" maxlength="150"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]">
+            </div>
+          </div>
+          
+          <div>
+            <label for="keterangan" class="block text-sm font-medium text-gray-700 mb-1">Keterangan (Opsional)</label>
+            <textarea id="keterangan" name="keterangan" rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"></textarea>
+          </div>
+          
+          <div class="pt-4 flex justify-end space-x-3">
+            <button type="button" id="btn-cancel-form" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]">
+              Batal
+            </button>
+            <button type="submit" id="btn-save" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]">
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Dialog -->
+  <div id="modal-delete" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 transform translate-y-4 transition-transform duration-300" id="modal-delete-content">
+      <div class="p-6">
+        <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        </div>
+        <h3 class="mb-2 text-lg font-normal text-center text-gray-900">Konfirmasi Hapus</h3>
+        <p class="mb-6 text-sm text-center text-gray-500">Apakah Anda yakin ingin menghapus barang <strong id="delete-target-name" class="text-gray-900"></strong>? Tindakan ini tidak dapat dibatalkan.</p>
+        <div class="flex justify-center gap-3">
+          <button id="btn-cancel-delete" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Batal</button>
+          <button id="btn-confirm-delete" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">Hapus</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<!-- Client Side Logic -->
+<script>
+  import { supabase } from '../../lib/supabase';
+  
+  // State
+  let currentDeleteId: string | null = null;
+  let isEditing = false;
+  
+  // DOM Elements
+  const tbody = document.getElementById('table-body');
+  const emptyState = document.getElementById('empty-state');
+  const summary = document.getElementById('table-summary');
+  
+  const searchInput = document.getElementById('filter-search') as HTMLInputElement;
+  const filterCat = document.getElementById('filter-kategori') as HTMLSelectElement;
+  const filterKond = document.getElementById('filter-kondisi') as HTMLSelectElement;
+  
+  const modalForm = document.getElementById('modal-form');
+  const modalFormContent = document.getElementById('modal-form-content');
+  const modalTitle = document.getElementById('modal-title');
+  const btnAdd = document.getElementById('btn-add-barang');
+  const btnCloseForm = document.getElementById('btn-close-modal');
+  const btnCancelForm = document.getElementById('btn-cancel-form');
+  const form = document.getElementById('barang-form') as HTMLFormElement;
+  const btnSave = document.getElementById('btn-save') as HTMLButtonElement;
+  
+  const modalDelete = document.getElementById('modal-delete');
+  const modalDeleteContent = document.getElementById('modal-delete-content');
+  const btnCancelDelete = document.getElementById('btn-cancel-delete');
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+  const deleteTargetName = document.getElementById('delete-target-name');
+
+  // Badge utility generator
+  const getBadgeHtml = (kondisi: string) => {
+    let classes = 'bg-gray-100 text-gray-800 border-gray-200';
+    if(kondisi === 'Baik') classes = 'bg-green-100 text-green-800 border-green-200';
+    if(kondisi === 'Rusak Ringan') classes = 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    if(kondisi === 'Rusak Berat') classes = 'bg-red-100 text-red-800 border-red-200';
+    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${classes}">${kondisi}</span>`;
+  };
+
+  // Helper bindings
+  const bindTableActions = () => {
+    document.querySelectorAll('.btn-edit').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const payload = (e.currentTarget as HTMLElement).getAttribute('data-json');
+        if (payload) {
+          const data = JSON.parse(payload);
+          openFormModal(true, data);
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = (e.currentTarget as HTMLElement).getAttribute('data-id');
+        const name = (e.currentTarget as HTMLElement).getAttribute('data-nama');
+        if (id && name) openDeleteModal(id, name);
+      });
+    });
+  };
+
+  // Fetch API logic
+  let fetchTimeout: any;
+  const fetchBarang = () => {
+    clearTimeout(fetchTimeout);
+    fetchTimeout = setTimeout(async () => {
+      try {
+        let query = supabase.from('barang').select('*, kategori(nama_kategori)').order('created_at', { ascending: false }).limit(50);
+        
+        if (searchInput.value.trim()) query = query.ilike('nama_barang', `%${searchInput.value.trim()}%`);
+        if (filterCat.value) query = query.eq('kategori_id', filterCat.value);
+        if (filterKond.value) query = query.eq('kondisi', filterKond.value);
+
+        const { data, error } = await query;
+        if (error) throw error;
+        
+        renderTable(data || []);
+      } catch (err: any) {
+        console.error("Error fetching", err);
+        window.showToast("Gagal mengambil data", "error");
+      }
+    }, 300); // Debounce
+  };
+
+  const renderTable = (data: any[]) => {
+    if (!tbody) return;
+    
+    if (data.length === 0) {
+      tbody.innerHTML = `
+        <tr id="empty-state">
+          <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+            <div class="flex flex-col items-center justify-center">
+              <svg class="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+              <p class="text-lg font-medium text-gray-900">Tidak ada barang ditemukan</p>
+              <p class="text-sm">Silakan ubah filter atau pencarian Anda.</p>
+            </div>
+          </td>
+        </tr>
+      `;
+    } else {
+      tbody.innerHTML = data.map((item, index) => `
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 pl-6">${index + 1}</td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-900 break-words">${item.nama_barang}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.kategori?.nama_kategori || '-'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">${item.jumlah}</td>
+          <td class="px-6 py-4 whitespace-nowrap">${getBadgeHtml(item.kondisi)}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.lokasi}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-2">
+            <button class="btn-edit text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] p-1" data-json='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </button>
+            <button class="btn-delete text-[var(--color-danger)] hover:text-red-700 p-1" data-id="${item.id}" data-nama="${item.nama_barang}">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+    
+    if (summary) summary.innerHTML = `Menampilkan <span class="font-medium">${data.length}</span> barang`;
+    bindTableActions();
+  };
+
+  // Modals functionality
+  const openFormModal = (edit = false, data: any = null) => {
+    isEditing = edit;
+    form.reset();
+    
+    if (modalTitle) modalTitle.textContent = edit ? "Edit Barang" : "Tambah Barang";
+    
+    if (edit && data) {
+      (document.getElementById('form-id') as HTMLInputElement).value = data.id;
+      (document.getElementById('nama_barang') as HTMLInputElement).value = data.nama_barang;
+      (document.getElementById('kategori_id') as HTMLInputElement).value = data.kategori_id;
+      (document.getElementById('jumlah') as HTMLInputElement).value = data.jumlah;
+      (document.getElementById('kondisi') as HTMLInputElement).value = data.kondisi;
+      (document.getElementById('lokasi') as HTMLInputElement).value = data.lokasi;
+      (document.getElementById('keterangan') as HTMLInputElement).value = data.keterangan || '';
+    } else {
+      (document.getElementById('form-id') as HTMLInputElement).value = '';
+    }
+
+    modalForm?.classList.remove('hidden');
+    // Using setTimeout to enable CSS transition
+    setTimeout(() => {
+      modalForm?.classList.remove('opacity-0');
+      modalFormContent?.classList.remove('translate-y-4');
+    }, 10);
+  };
+
+  const closeFormModal = () => {
+    modalForm?.classList.add('opacity-0');
+    modalFormContent?.classList.add('translate-y-4');
+    setTimeout(() => {
+      modalForm?.classList.add('hidden');
+    }, 300);
+  };
+
+  const openDeleteModal = (id: string, name: string) => {
+    currentDeleteId = id;
+    if (deleteTargetName) deleteTargetName.textContent = name;
+    
+    modalDelete?.classList.remove('hidden');
+    setTimeout(() => {
+      modalDelete?.classList.remove('opacity-0');
+      modalDeleteContent?.classList.remove('translate-y-4');
+    }, 10);
+  };
+
+  const closeDeleteModal = () => {
+    currentDeleteId = null;
+    modalDelete?.classList.add('opacity-0');
+    modalDeleteContent?.classList.add('translate-y-4');
+    setTimeout(() => {
+      modalDelete?.classList.add('hidden');
+    }, 300);
+  };
+
+  // Event Listeners
+  searchInput?.addEventListener('input', fetchBarang);
+  filterCat?.addEventListener('change', fetchBarang);
+  filterKond?.addEventListener('change', fetchBarang);
+
+  btnAdd?.addEventListener('click', () => openFormModal(false));
+  btnCloseForm?.addEventListener('click', closeFormModal);
+  btnCancelForm?.addEventListener('click', closeFormModal);
+  
+  btnCancelDelete?.addEventListener('click', closeDeleteModal);
+  
+  // Submit Form
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    btnSave.disabled = true;
+    btnSave.textContent = 'Menyimpan...';
+
+    const formData = new FormData(form);
+    const id = formData.get('id') as string;
+    const payload = {
+      nama_barang: formData.get('nama_barang'),
+      kategori_id: formData.get('kategori_id'),
+      jumlah: parseInt(formData.get('jumlah') as string),
+      kondisi: formData.get('kondisi'),
+      lokasi: formData.get('lokasi'),
+      keterangan: formData.get('keterangan')
+    };
+
+    try {
+      if (isEditing && id) {
+        const { error } = await supabase.from('barang').update(payload).eq('id', id);
+        if (error) throw error;
+        window.showToast('Barang berhasil diupdate');
+      } else {
+        const { error } = await supabase.from('barang').insert([payload]);
+        if (error) throw error;
+        window.showToast('Barang baru berhasil ditambahkan');
+      }
+      
+      closeFormModal();
+      fetchBarang(); // Refresh table
+    } catch (err: any) {
+      console.error(err);
+      window.showToast(err.message || 'Gagal menyimpan barang', 'error');
+    } finally {
+      btnSave.disabled = false;
+      btnSave.textContent = 'Simpan';
+    }
+  });
+
+  // Confirm Delete
+  btnConfirmDelete?.addEventListener('click', async () => {
+    if (!currentDeleteId) return;
+    
+    const btn = btnConfirmDelete as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Menghapus...';
+
+    try {
+      const { error } = await supabase.from('barang').delete().eq('id', currentDeleteId);
+      if (error) throw error;
+      
+      window.showToast('Barang berhasil dihapus');
+      closeDeleteModal();
+      fetchBarang();
+    } catch (err: any) {
+      console.error(err);
+      window.showToast(err.message || 'Gagal menghapus barang', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Hapus';
+    }
+  });
+
+  // Init Actions on mount
+  bindTableActions();
+</script>

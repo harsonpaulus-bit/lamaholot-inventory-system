@@ -1,0 +1,150 @@
+---
+import AuthLayout from '../layouts/AuthLayout.astro';
+---
+
+<AuthLayout title="Login">
+  <div class="flex w-full items-center justify-center p-4">
+    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col md:flex-row min-h-[600px] animate-scale-in">
+      
+      <!-- Brand/Hero Section (Left on Desktop) -->
+      <div class="w-full md:w-1/2 relative bg-surface-900 overflow-hidden hidden md:block">
+        <img 
+          src="/assets/img/login-bg-natural.png" 
+          alt="Modern School Architecture" 
+          class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-overlay scale-110 hover:scale-100 transition-transform duration-[2000ms]"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-900/40 to-transparent"></div>
+        <div class="absolute inset-0 p-12 flex flex-col justify-end">
+            <div class="w-14 h-14 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl flex items-center justify-center p-3 text-white mb-8">
+            <svg class="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+              <path d="m3.3 7 8.7 5 8.7-5" />
+              <path d="M12 22V12" />
+            </svg>
+          </div>
+          <h2 class="text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Satu Sistem,<br/>
+            Segala Kemudahan.
+          </h2>
+          <p class="text-surface-300 mt-4 text-lg font-medium leading-relaxed max-w-sm">
+            Optimalisasi manajemen aset dan inventaris sekolah untuk masa depan pendidikan yang lebih baik.
+          </p>
+          
+          <div class="mt-12 flex items-center gap-4 text-white/50 text-sm font-semibold uppercase tracking-widest leading-none">
+            <span class="w-10 h-[2px] bg-white/20"></span>
+            SD LAMAHOLOT
+          </div>
+        </div>
+      </div>
+
+      <!-- Login Form Section (Right) -->
+      <div class="w-full md:w-1/2 p-8 sm:p-12 md:p-16 flex flex-col">
+        <div class="md:hidden flex items-center gap-3 mb-10">
+          <div class="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center text-white text-lg shadow-lg shadow-primary-500/30 font-bold">
+            L
+          </div>
+          <span class="text-xl font-bold text-surface-900 tracking-tight uppercase">SD LAMAHOLOT</span>
+        </div>
+
+        <div class="flex-1">
+          <h3 class="text-3xl font-extrabold text-surface-900 tracking-tight mb-2">Selamat Datang</h3>
+          <p class="text-surface-500 mb-10 font-medium">Silakan masuk ke portal inventaris Anda.</p>
+
+          <form id="login-form" class="space-y-6">
+            <div id="error-alert" class="hidden bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-2xl relative animate-fade-in" role="alert">
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="text-sm font-bold" id="error-message">Akses ditolak. Periksa kembali email dan sandi.</span>
+              </div>
+            </div>
+
+            <div class="space-y-1.5 focus-within:z-10 group">
+              <label for="email" class="block text-xs font-bold text-surface-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-primary-600">Alamat Email</label>
+              <div class="relative transition-all duration-300 group-focus-within:translate-x-1">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-surface-400 group-focus-within:text-primary-500 transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
+                </div>
+                <input type="email" id="email" name="email" required 
+                  class="premium-input !pl-12 !py-4 font-semibold text-surface-900" 
+                  placeholder="admin@sdlamaholot.sch.id">
+              </div>
+            </div>
+
+            <div class="space-y-1.5 focus-within:z-10 group">
+              <div class="flex justify-between items-center px-1">
+                <label for="password" class="block text-xs font-bold text-surface-400 uppercase tracking-widest transition-colors group-focus-within:text-primary-600">Kata Sandi</label>
+                <a href="#" class="text-xs font-bold text-primary-600 hover:text-primary-700 hover:underline">Lupa sandi?</a>
+              </div>
+              <div class="relative transition-all duration-300 group-focus-within:translate-x-1">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-surface-400 group-focus-within:text-primary-500 transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                <input type="password" id="password" name="password" required 
+                  class="premium-input !pl-12 !py-4 font-bold text-surface-900 tracking-tight" 
+                  placeholder="••••••••">
+              </div>
+            </div>
+
+            <button type="submit" id="submit-btn" 
+              class="btn-primary w-full mt-10 !py-4 shadow-xl">
+              <span class="text-base uppercase tracking-widest">Masuk Portal</span>
+              <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </button>
+          </form>
+        </div>
+
+        <div class="mt-auto pt-10 text-center text-xs font-bold text-surface-400 uppercase tracking-[0.2em]">
+          &copy; {new Date().getFullYear()} SD Lamaholot &bull; Jakarta Barat
+        </div>
+      </div>
+    </div>
+  </div>
+</AuthLayout>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const loginForm = document.getElementById('login-form') as HTMLFormElement;
+  const errorAlert = document.getElementById('error-alert');
+  const errorMessage = document.getElementById('error-message');
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = (document.getElementById('email') as HTMLInputElement).value;
+      const password = (document.getElementById('password') as HTMLInputElement).value;
+      
+      // Reset UI
+      errorAlert?.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<svg class="w-6 h-6 animate-spin mr-3" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span class="uppercase tracking-widest text-base">Otentikasi...</span>';
+
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+        
+        // Set cookies manually for SSR auth
+        if(data.session) {
+           document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=${data.session.expires_in}; SameSite=Lax; secure`;
+           document.cookie = `sb-refresh-token=${data.session.refresh_token}; path=/; max-age=${data.session.expires_in}; SameSite=Lax; secure`;
+        }
+
+        window.location.href = '/dashboard';
+      } catch (error: any) {
+        if (errorAlert && errorMessage) {
+          errorAlert.classList.remove('hidden');
+          // No generic message override unless needed
+        }
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="text-base uppercase tracking-widest">Masuk Portal</span><svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>';
+      }
+    });
+  }
+</script>

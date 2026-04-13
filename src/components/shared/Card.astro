@@ -1,0 +1,14 @@
+---
+// src/components/shared/Card.astro
+interface Props {
+  title?: string;
+  className?: string;
+}
+
+const { title, className = "" } = Astro.props;
+---
+
+<div class={`bg-white rounded-xl shadow-md border border-[var(--color-border)] p-6 ${className}`}>
+  {title && <h3 class="text-lg font-semibold text-[var(--color-text-primary)] mb-4">{title}</h3>}
+  <slot />
+</div>

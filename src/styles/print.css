@@ -1,0 +1,61 @@
+@media print {
+  /* Hide UI elements */
+  nav, #btn-print, .no-print {
+    display: none !important;
+  }
+
+  /* Reset layout for print */
+  body, main {
+    background-color: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* Show Print Header */
+  .print-header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #000;
+  }
+
+  /* Show Print Footer */
+  .print-footer {
+    display: flex !important;
+    justify-content: space-between;
+    margin-top: 4rem;
+    page-break-inside: avoid;
+  }
+
+  /* Table styling */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+  
+  th, td {
+    padding: 8px !important;
+    border: 1px solid #ddd !important;
+    color: #000 !important;
+  }
+
+  th {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Avoid breaking rows inside table */
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Card resets */
+  .bg-white {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
